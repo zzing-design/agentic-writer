@@ -4,7 +4,8 @@ import time
 import pandas as pd
 
 # ----------------- 配置 -----------------
-openai.api_key = "OPENAI_API_KEY"  # 替换成你的API Key
+import os
+openai.api_key = os.getenv("OPENAI_API_KEY")
 
 # Prompt 模板
 STRUCTURE_PROMPT = """
