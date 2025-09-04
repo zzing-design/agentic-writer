@@ -27,12 +27,21 @@ SUBTASK_PROMPT = """
 """
 
 # ----------------- 函数 -----------------
+from openai import RateLimitError, APIError
+
 def call_openai(prompt):
-    response = client.chat.completions.create(
-        model="gpt-3.5-turbo",
-        messages=[{"role": "user", "content": prompt}]
-    )
-    return response.choices[0].message.content
+    try:
+        response = client.chat.completions.create(
+            model="gpt-3.5-turbo",
+            messages=[{"role": "user", "content": prompt}]
+        )
+        return response.choices[0].message.content
+    except RateLimitError:
+        return "⚠️ 请求过于频繁或额度已用完，请稍后重试或检查 API 使用情况。"
+    except APIError as e:
+        return f"⚠️ OpenAI 返回错误：{str(e)}"
+    except Exception as e:
+        return f"⚠️ 出现未知错误：{str(e)}"
 
 def parse_structure(response_text):
     lines = response_text.strip().split("\n")
