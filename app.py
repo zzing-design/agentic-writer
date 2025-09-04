@@ -1,11 +1,11 @@
 import streamlit as st
-import openai
 import time
 import pandas as pd
+import os
 
 # ----------------- 配置 -----------------
-import os
-openai.api_key = os.getenv("OPENAI_API_KEY")
+from openai import OpenAI
+client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 # Prompt 模板
 STRUCTURE_PROMPT = """
@@ -28,7 +28,7 @@ SUBTASK_PROMPT = """
 
 # ----------------- 函数 -----------------
 def call_openai(prompt):
-    response = openai.ChatCompletion.create(
+    response = client.chat.completions.create(
         model="gpt-3.5-turbo",
         messages=[{"role": "user", "content": prompt}]
     )
