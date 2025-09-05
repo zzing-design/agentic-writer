@@ -77,6 +77,9 @@ if st.session_state.structure:
     st.subheader("2️⃣ 写作结构 & 协作编辑")
     for idx, section in enumerate(st.session_state.structure):
         with st.expander(f"📌 第{idx+1}段：{section['title']}"):
+            # 可编辑标题 & 提示
+            section['title'] = st.text_input(f"段落标题 - 第{idx+1}段", value=section['title'], key=f"title_{idx}")
+            section['hint'] = st.text_input(f"提示语 - 第{idx+1}段", value=section['hint'], key=f"hint_{idx}")
             st.write(f"提示：{section['hint']}")
             if st.button(f"生成建议内容 - 第{idx+1}段"):
                 prompt = SUBTASK_PROMPT.format(theme=st.session_state.theme, heading=section['title'])
@@ -88,6 +91,7 @@ if st.session_state.structure:
                 st.markdown("**AI建议内容：**")
                 st.info(st.session_state[f"ai_text_{idx}"])
                 user_edit = st.text_area("你的修改版本：", key=f"edit_{idx}")
+                st.session_state[f"user_edit_{idx}"] = user_edit
 
 # ----------------- 数据记录（可选） -----------------
 # 可在后续加入 csv 保存日志，例如写入每段修改内容、点击时间等。
