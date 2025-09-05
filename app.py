@@ -4,8 +4,11 @@ import pandas as pd
 import os
 
 # ----------------- 配置 -----------------
-from openai import OpenAI
-client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+import google.generativeai as genai
+
+genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
+model = genai.GenerativeModel("gemini-pro")
+
 
 # Prompt 模板
 STRUCTURE_PROMPT = """
@@ -29,19 +32,13 @@ SUBTASK_PROMPT = """
 # ----------------- 函数 -----------------
 from openai import RateLimitError, APIError
 
-def call_openai(prompt):
+def call_gemini(prompt):
     try:
-        response = client.chat.completions.create(
-            model="gpt-3.5-turbo",
-            messages=[{"role": "user", "content": prompt}]
-        )
-        return response.choices[0].message.content
-    except RateLimitError:
-        return "⚠️ 请求过于频繁或额度已用完，请稍后重试或检查 API 使用情况。"
-    except APIError as e:
-        return f"⚠️ OpenAI 返回错误：{str(e)}"
+        response = model.generate_content(prompt)
+        return response.text
     except Exception as e:
-        return f"⚠️ 出现未知错误：{str(e)}"
+        return f"⚠️ Gemini 出错：{str(e)}"
+
 
 def parse_structure(response_text):
     lines = response_text.strip().split("\n")
@@ -71,7 +68,7 @@ if st.button("生成写作结构"):
     st.session_state.theme = theme
     with st.spinner("AI 正在生成写作结构..."):
         prompt = STRUCTURE_PROMPT.format(theme=theme)
-        response = call_openai(prompt)
+        response = call_gemini(prompt)
         st.session_state.structure = parse_structure(response)
         st.success("结构生成完成！")
 
@@ -99,4 +96,4 @@ if st.session_state.structure:
 # 可添加按钮将全部段落内容组合展示或导出。
 
 st.markdown("---")
-st.caption("📊 Prototype v0.1 by ChatGPT")
+st.caption("📊 Prototype v0.1 by Nyxien")
