@@ -81,7 +81,7 @@ if st.session_state.structure:
             if st.button(f"生成建议内容 - 第{idx+1}段"):
                 prompt = SUBTASK_PROMPT.format(theme=st.session_state.theme, heading=section['title'])
                 with st.spinner("AI 正在生成建议内容..."):
-                    ai_text = call_openai(prompt)
+                    ai_text = call_gemini(prompt)
                     st.session_state[f"ai_text_{idx}"] = ai_text
                     st.success("生成完成")
             if f"ai_text_{idx}" in st.session_state:
