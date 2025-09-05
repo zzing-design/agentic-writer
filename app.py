@@ -7,7 +7,7 @@ import os
 import google.generativeai as genai
 
 genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
-model = genai.GenerativeModel("gemini-pro")
+model = genai.GenerativeModel(model_name="gemini-pro")
 
 
 # Prompt 模板
